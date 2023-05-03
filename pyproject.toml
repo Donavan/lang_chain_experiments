@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "dopamine_lang_chain_experiments"
+version = "0.0.1"
+authors = [
+  { name="Example Author", email="snark@hey.com" },
+]
+description = "Various experiments with LangChain"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/Donavan/lang_chain_experiments"
+"Bug Tracker" = "https://github.com/Donavan/lang_chain_experiments/issues"
