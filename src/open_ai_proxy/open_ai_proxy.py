@@ -20,13 +20,14 @@ REQUESTS_PER_MINUTE_LIMIT = 3500
 PROXY_TARGET = "https://api.openai.com"
 
 semaphore = threading.Semaphore(CONCURRENT_REQUESTS_LIMIT)
+active_requests = 0
+active_requests_lock = threading.Lock()
 
 limiter = Limiter(
     app,
     key_func=lambda: request.remote_addr,  # Although we're not limiting clients, this is required by the Limiter
     default_limits=[],  # No rate limits for clients
 )
-
 
 token_bucket = TokenBucket(REQUESTS_PER_MINUTE_LIMIT, 60)  # 60 seconds for a minute
 
@@ -56,8 +57,17 @@ def proxy(path):
     response = Response(resp.content, resp.status_code, headers)
     return response
 
+
 def signal_handler(signal, frame):
     logging.info("Received signal, waiting for proxy calls to complete and shutting down gracefully...")
+
+    # Wait for active requests to complete
+    while True:
+        with active_requests_lock:
+            if active_requests == 0:
+                break
+        time.sleep(1)
+
     sys.exit(0)
 
 if __name__ == '__main__':
